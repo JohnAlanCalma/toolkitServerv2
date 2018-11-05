@@ -1,0 +1,45 @@
+<head>
+	<meta charset="utf-8" />
+	<title>ARKit demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<link rel="stylesheet" href="./skeleton.min.css">
+	<link rel="shortcut icon" href="#">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/vue/2.1.6/vue.min.js"></script>
+</head>
+
+
+<body style="margin:0; overflow-y: hidden;">
+  <div id="app">
+  <div class="container">
+    <nav class="navbar">
+      <div class="container">
+        <ul class="navbar-list">
+          <li class="navbar-item"><img class="navbar-img" src="logo.png"/></li>
+          <li class="navbar-item"><button @click="uploadFile()" class="navbar-button button-primary">Upload</button></li>
+          <li class="navbar-itemr"><button onClick="resetView()" class="navbar-button">GitHub</button></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="overlay" style="left: 1em; top: 5em; display: flex;">
+      <div v-for="item in Items" :key="item.urn"
+          @click="loadModel(item.urn)" :title="item.thumb" >
+          <button :title="item.objectKey" class="thumb button-primary" v-bind:style="{ 'background': 'url(' + item.thumb + ') repeat center' }" ></button>
+
+      </div>
+  </div>
+
+  <div class="overlay" style="left: 1em; top: 15em; width:250px">
+    <label for="exampleEmailInput">Copy URN, Token & SceneID</label>
+      <input class="u-full-width" placeholder="URN" v-model="form.urn">
+      <input class="u-full-width" placeholder="TOKEN" v-model="form.token">
+      <input class="u-full-width" placeholder="SCENE" v-model="form.scene">
+  </div>
+
+</div>
+  <div id="forgeViewer"></div>
+</body>
+<script language="JavaScript" src="_files.js"></script>
+<script language="JavaScript" src="app.js"></script>
+<script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/6.*/viewer3D.min.js" language="JavaScript"></script>
+<link  href="https://developer.api.autodesk.com/modelderivative/v2/viewers/6.*/style.min.css" type="text/css" rel="stylesheet" >
