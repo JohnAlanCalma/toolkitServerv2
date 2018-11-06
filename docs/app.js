@@ -1,7 +1,7 @@
 var viewer, svf;
 var markup;
-var ServerURL = 'http://localhost:8080';
-//var ServerURL = 'https://xf79h9aa3l.execute-api.us-west-2.amazonaws.com/toolkit2/';
+//var ServerURL = 'http://localhost:8080';
+var ServerURL = 'https://xf79h9aa3l.execute-api.us-west-2.amazonaws.com/toolkit2/';
 var ThumbURL = 'https://developer.api.autodesk.com/modelderivative/v2/designdata';
 
 // Vue.js components
