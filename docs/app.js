@@ -55,6 +55,24 @@ window.app = new Vue({
             });
         },
 
+        setImgSrc: async function(el, urn) {
+            const header = {
+                method: 'GET',
+                mode: 'cors',
+                headers: { 'Authorization': `Bearer ${_adsk.token.access_token}` },
+            };
+            const url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/thumbnail?width=100&height=100`
+            const res = await fetch( url, header );
+            const blb = await res.blob();
+            el.src = URL.createObjectURL(blb);
+        }
+    },
+    directives: {
+        'auth-image': {
+      bind: function(el, binding) {
+        app.setImgSrc(el, binding.value.slice(4));
+      },
+        }
     }
 })
 

@@ -17,9 +17,10 @@ app.get('/api/_adsk.js', async (req, res) => {
 	const token = await auth.getAccessToken();
 	const files = (await auth.getBucketFiles()).items.map( i => {
 		const safeurn = atob(i.objectId).split("=")[0];
-		const thumb = `/api/thumbnail?urn=${safeurn}`;
+		const thumb = `thumbs/${i.objectKey}.png`;
 		return {objectId:i.objectId, objectKey:i.objectKey, size:i.size, urn:`urn:${safeurn}`, thumb:thumb };
 	});
+	//res.setHeader("Expires", new Date(Date.now() + (60 * token.expires_in) ).toUTCString());
 	res.setHeader("Cache-Control", `public, max-age=${token.expires_in}`); // js file is cached for about 15 mins
 	res.send( `var _adsk = ${JSON.stringify( {token:token, files: files })}` );
 });
@@ -33,7 +34,6 @@ app.get('/api/token', async (req, res) => {
 	res.json( await auth.getAccessToken() );
 });
 
-
 //////////////////
 // List files from bucket
 //////////////////
@@ -41,19 +41,10 @@ app.get('/api/files', async (req, res) => {
 	//res.json( (await auth.getBucketFiles()).items );
 	res.json( (await auth.getBucketFiles()).items.map( i => {
 		const urn = atob(i.objectId).split("=")[0];
-		const thumb = `/api/thumbnail?urn=${urn}`;
+		const thumb = `thumbs/${i.objectKey}.png`;
+		console.log(thumb);
 		return {objectId:i.objectId, objectKey:i.objectKey, size:i.size, urn:'urn:'+urn, thumb:thumb };
 	}));
-});
-
-
-//////////////////
-// server bucket thumbnails
-//////////////////
-app.get('/api/thumbnail', async (req, res) => {
-	res.setHeader('Content-type', 'image/png');
-	res.setHeader("Cache-Control", "public, max-age=3600");
-    res.end(await auth.getThumbnail(req.query.urn));
 });
 
 
@@ -74,9 +65,11 @@ app.get('/api/processjob', async (req, res) => {
 	res.json( await auth.getAccessToken() );
 });
 
+console.log(__dirname);
+app.use(express.static(__dirname + '/../docs'));
 
 //////////////////
-//const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 // <-- uncomment below line for local debugging, then type: >node server.js
-// app.listen(port, () => { console.log(`Server listening on port ${port}`); });
+app.listen(port, () => { console.log(`Server listening on port ${port}`); });
 module.exports = app

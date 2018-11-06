@@ -22,10 +22,10 @@
     </nav>
   </div>
   <div class="overlay" style="left: 1em; top: 5em; display: flex;">
-      <div v-for="item in Items" :key="item.urn"
-          @click="loadModel(item.urn)" :title="item.thumb" >
-          <button :title="item.objectKey" class="thumb button-primary" v-bind:style="{ 'background': 'url(' + item.thumb + ') repeat center' }" ></button>
-
+      <div v-for="item in Items" :key="item.urn" @click="loadModel(item.urn)" >
+        <button  :title="item.objectKey" class="button" >>....</button>
+          <img class="thumb" v-auth-image="item.urn" width="100px" height="100px">
+          
       </div>
   </div>
 

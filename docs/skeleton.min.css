@@ -14,7 +14,9 @@
   position: relative;
 }
 
-.thumb { height:70px; vertical-align: bottom; }
+.thumb { height:70px; vertical-align: bottom;   position: absolute;
+  top: 0; z-index: -1
+   }
 
 .thumb:hover { width:100px; }
 
