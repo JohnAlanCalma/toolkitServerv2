@@ -4,12 +4,18 @@ const app = express();
 const { ForgeAPI } = require('./api/forgeapi')
 const { Toolkit } = require('./api/toolkit')
 
+/*
 const auth = new ForgeAPI( 
 	process.env.FORGE_CLIENT_ID, 
 	process.env.FORGE_CLIENT_SECRET, 
 	process.env.FORGE_BUCKET);
+*/
 
-
+const auth = new ForgeAPI( 
+	"Gb3hl69KmX8jPBBgArmSTQ6gCGpgkuBj", 
+	"34eVFvRAUJVmdlhN", 
+	"vrparty1");
+	
 let tk;
 
 const atob = (data) => Buffer.from(data).toString('base64');
@@ -78,10 +84,10 @@ app.get('/api/upload', async (req, res) => {
 
 
 
-app.use(express.static(__dirname + '/../docs'));
+app.use(express.static(__dirname + '/../../docs'));
 
 //////////////////
 const port = process.env.PORT || 8080;
 // <-- uncomment below line for local debugging, then type: >node server.js
-//app.listen(port, () => { console.log(`Server listening on port ${port}`); });
+app.listen(port, () => { console.log(`Server listening on port ${port}`); });
 module.exports = app
