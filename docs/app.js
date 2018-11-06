@@ -1,7 +1,8 @@
 var viewer, svf;
 var markup;
-var ServerURL = 'http://localhost:3000';
-
+var ServerURL = 'http://localhost:8080';
+//var ServerURL = 'https://xf79h9aa3l.execute-api.us-west-2.amazonaws.com/toolkit2/';
+var ThumbURL = 'https://developer.api.autodesk.com/modelderivative/v2/designdata';
 
 // Vue.js components
 window.app = new Vue({
@@ -15,21 +16,21 @@ window.app = new Vue({
 
         init: function() {
             this.Items = _adsk.files;
-            this.form.token = _adsk.token.access_token;
-            this.form.scene = 'test';
         },
 
         loadModel: function(urn) {
-            this.form.urn = urn.slice(4);
+            this.form.urn = urn;
+            this.form.token = _adsk.token.access_token;
+            this.form.scene = 'test';
             options = {
                 useADP: false,
                 env: "AutodeskProduction",
                 accessToken: _adsk.token.access_token,
-                isAEC:true
+                isAEC: true
             };
             viewer = new Autodesk.Viewing.Private.GuiViewer3D(document.getElementById('forgeViewer'));
             Autodesk.Viewing.Initializer(options);
-            Autodesk.Viewing.Document.load(urn, (doc) =>{
+            Autodesk.Viewing.Document.load(`urn:${urn}`, (doc) =>{
                 var geometries = doc.getRoot().search({ 'type': 'geometry', 'role': '3d' });
                 svf = doc.getViewablePath(geometries[0]);
                 viewer.start(svf, { sharedPropertyDbPath: doc.getPropertyDbPath() });
@@ -43,15 +44,23 @@ window.app = new Vue({
             });
         },
 
-        pollProgress: function(sceneid) {
-            fetch(`${ServerURL}/api/getstatus${sceneid}`).then((res) => res.json()).then((json) => {
-                console.log('createdScene');
-            });
+        pollProgress: async function(urn) {
+            const url = `${ServerURL}/api/status?urn=${urn}`;
+            const res = await fetch( url );
+            return res.json();
         },
 
         createScene: function(item) {
-            fetch(`${ServerURL}/api/createscene${item.objectId}`).then((res) => res.json()).then((json) => {
+            fetch(`${ServerURL}/api/createscene?urn=${item.urn}&scene=${this.form.scene}`).then((res) => res.json()).then((json) => {
                 console.log('createdScene');
+                const timer = setInterval( async () =>  {
+                    const res = await this.pollProgress(item.urn);
+                    if (res.progress == "complete") {
+                        alert('finished'); 
+                        clearInterval(timer);
+                        console.log(res);
+                    }
+                },5000)
             });
         },
 
@@ -61,7 +70,7 @@ window.app = new Vue({
                 mode: 'cors',
                 headers: { 'Authorization': `Bearer ${_adsk.token.access_token}` },
             };
-            const url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/thumbnail?width=100&height=100`
+            const url = `${ThumbURL}/${urn}/thumbnail?width=100&height=100`
             const res = await fetch( url, header );
             const blb = await res.blob();
             el.src = URL.createObjectURL(blb);
@@ -70,7 +79,7 @@ window.app = new Vue({
     directives: {
         'auth-image': {
       bind: function(el, binding) {
-        app.setImgSrc(el, binding.value.slice(4));
+        app.setImgSrc(el, binding.value);
       },
         }
     }

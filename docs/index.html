@@ -16,16 +16,15 @@
         <ul class="navbar-list">
           <li class="navbar-item"><img class="navbar-img" src="logo.png"/></li>
           <li class="navbar-item"><button @click="uploadFile()" class="navbar-button button-primary">Upload</button></li>
-          <li class="navbar-itemr"><button onClick="resetView()" class="navbar-button">GitHub</button></li>
+          <li class="navbar-itemr"><a href="https://github.com/wallabyway/toolkitServerv2"><button class="navbar-button">GitHub</button></a></li>
         </ul>
       </div>
     </nav>
   </div>
   <div class="overlay" style="left: 1em; top: 5em; display: flex;">
       <div v-for="item in Items" :key="item.urn" @click="loadModel(item.urn)" >
-        <button  :title="item.objectKey" class="button" >>....</button>
+        <button  :title="item.objectKey" class="button" @click="createScene(item)" >>....</button>
           <img class="thumb" v-auth-image="item.urn" width="100px" height="100px">
-          
       </div>
   </div>
 
@@ -40,6 +39,7 @@
   <div id="forgeViewer"></div>
 </body>
 <script language="JavaScript" src="https://xf79h9aa3l.execute-api.us-west-2.amazonaws.com/toolkit2/api/_adsk.js"></script>
+<!--script language="JavaScript" src="./api/_adsk.js"></script-->
 <script language="JavaScript" src="app.js"></script>
 <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/6.*/viewer3D.min.js" language="JavaScript"></script>
 <link  href="https://developer.api.autodesk.com/modelderivative/v2/viewers/6.*/style.min.css" type="text/css" rel="stylesheet" >
