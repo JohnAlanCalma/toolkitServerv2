@@ -16,12 +16,12 @@ window.app = new Vue({
 
         init: function() {
             this.Items = _adsk.files;
+            this.form.scene = 'test';
         },
 
         loadModel: function(urn) {
             this.form.urn = urn;
             this.form.token = _adsk.token.access_token;
-            this.form.scene = 'test';
             options = {
                 useADP: false,
                 env: "AutodeskProduction",
@@ -45,18 +45,18 @@ window.app = new Vue({
         },
 
         pollProgress: async function(urn) {
-            const url = `${ServerURL}/api/status?urn=${urn}`;
+            const url = `${ServerURL}/api/status?urn=${urn}&token=${_adsk.token.access_token}`;
             const res = await fetch( url );
             return res.json();
         },
 
         createScene: function(item) {
-            fetch(`${ServerURL}/api/createscene?urn=${item.urn}&scene=${this.form.scene}`).then((res) => res.json()).then((json) => {
+            fetch(`${ServerURL}/api/createscene?urn=${item.urn}&scene=${this.form.scene}&token=${_adsk.token.access_token}`).then((res) => res.json()).then((json) => {
                 console.log('createdScene');
                 const timer = setInterval( async () =>  {
                     const res = await this.pollProgress(item.urn);
-                    if (res.progress == "complete") {
-                        alert('finished'); 
+                    if (res.derivatives[1].progress != "inprogress") {
+                        alert('finished');
                         clearInterval(timer);
                         console.log(res);
                     }
