@@ -4,16 +4,21 @@ const app = express();
 const { ForgeAPI } = require('./api/forgeapi')
 const { Toolkit } = require('./api/toolkit')
 
+const atob = (data) => Buffer.from(data).toString('base64');
+
 const auth = new ForgeAPI( 
 	process.env.FORGE_CLIENT_ID, 
 	process.env.FORGE_CLIENT_SECRET, 
 	process.env.FORGE_BUCKET);
 
 
-let tk;
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
-const atob = (data) => Buffer.from(data).toString('base64');
-
+var token = "";
 
 //////////////////
 // List bucket files, access-token, thumbnail as js file
@@ -21,8 +26,7 @@ const atob = (data) => Buffer.from(data).toString('base64');
 // or... use the other more tradional two endpoints.
 //////////////////
 app.get('/api/_adsk.js', async (req, res) => {
-	const token = await auth.getAccessToken();
-	tk = new Toolkit(token, process.env.FORGE_SCENE);
+	token = await auth.getAccessToken();
 	const files = (await auth.getBucketFiles()).items.map( i => {
 		const safeurn = atob(i.objectId).split("=")[0];
 		const thumb = `thumbs/${i.objectKey}.png`;
@@ -57,6 +61,9 @@ app.get('/api/files', async (req, res) => {
 
 //////////////////
 app.get('/api/createscene', async (req, res) => {
+	if (!token)
+		token = req.query.token;
+	const tk = new Toolkit(token, process.env.FORGE_SCENE);
 	const status1 = await tk.createScene(req.query.urn, req.query.scene);
 	const status2 = await tk.processSVF(req.query.urn, req.query.scene);
 	res.json(status2);
@@ -65,8 +72,10 @@ app.get('/api/createscene', async (req, res) => {
 
 //////////////////
 app.get('/api/status', async (req, res) => {
+	if (!token)
+		token = req.query.token;
+	const tk = new Toolkit(token, process.env.FORGE_SCENE);
 	const rst = await tk.jobStatus(req.query.urn);
-	console.log(JSON.stringify(rst));
 	res.json( rst );
 });
 
@@ -83,5 +92,5 @@ app.use(express.static(__dirname + '/../docs'));
 //////////////////
 const port = process.env.PORT || 8080;
 // <-- uncomment below line for local debugging, then type: >node server.js
-//app.listen(port, () => { console.log(`Server listening on port ${port}`); });
+app.listen(port, () => { console.log(`Server listening on port ${port}`); });
 module.exports = app
