@@ -9,7 +9,7 @@ window.app = new Vue({
     el: "#app",
 
     data: {
-        form: {urn: null, token: null, scene: null },
+        form: {urn: null, token: null, scene: null, title:"Copy URN, Token & SceneID"},
         istoast: false,
         toastmsg: "na",
         Items: []
@@ -21,7 +21,8 @@ window.app = new Vue({
             this.form.scene = 'test';
         },
 
-        loadModel: function(urn) {
+        loadModel: function(urn, title) {
+            this.form.title = title;
             this.form.urn = urn;
             this.form.token = _adsk.token.access_token;
             options = {
