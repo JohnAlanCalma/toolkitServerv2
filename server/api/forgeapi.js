@@ -18,16 +18,32 @@ class ForgeAPI {
 		const payload = `grant_type=client_credentials&client_id=${this.key}&client_secret=${this.secret}&scope=${this.scope}`;
 	    const res = await fetch( url, { method: 'POST', headers: header, body: payload });
 	    this.token = await res.json();
-		return this.token;
-	}
-
-	async getBucketFiles(token = this.token.access_token) {
-	    const url = `${FORGEURL}/oss/v2/buckets/${this.bucket}/objects`;
 		this.header = {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json',
 			'Authorization': `Bearer ${this.token.access_token}`,
 		};
+		return this.token;
+	}
+
+	async getBucketFiles(token = this.token.access_token) {
+	    const url = `${FORGEURL}/oss/v2/buckets/${this.bucket}/objects`;
+	    const res = await fetch( url, { headers: this.header });
+		return res.json();
+	}
+
+	async processjob(urn, token = this.token.access_token) {
+	    const url = `${FORGEURL}/modelderivative/v2/designdata/job`;
+		const payload = {
+		    "input": { "urn": urn },
+		    "output": { "formats": [ { "type": "svf", "views": ["2d", "3d"] }]}
+		};
+	    const res = await fetch( url, { method: "POST", body: payload, headers: this.header });
+		return res.json();
+	}
+
+	async jobstatus(urn, token = this.token.access_token) {
+	    const url = `${FORGEURL}/modelderivative/v2/designdata/${urn}/manifest`;
 	    const res = await fetch( url, { headers: this.header });
 		return res.json();
 	}
