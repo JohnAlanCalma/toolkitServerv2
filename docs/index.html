@@ -23,7 +23,7 @@
   </div>
   <div class="overlay" style="left: 1em; top: 5em; display: flex;">
       <div v-for="item in Items" :key="item.urn" @click="loadModel(item.urn)" >
-        <button  :title="item.objectKey" class="button" @click="createScene(item)" >>....</button>
+        <button  :title="item.objectKey" class="button" @click="createScene(item)" >x</button>
           <img class="thumb" v-auth-image="item.urn" width="100px" height="100px">
       </div>
   </div>
@@ -34,6 +34,7 @@
       <input class="u-full-width" placeholder="TOKEN" v-model="form.token">
       <input class="u-full-width" placeholder="SCENE" v-model="form.scene">
   </div>
+  <div id="toast" v-bind:class="{ show: istoast }">{{toastmsg}}</div>
 
 </div>
   <div id="forgeViewer"></div>

@@ -10,6 +10,8 @@ window.app = new Vue({
 
     data: {
         form: {urn: null, token: null, scene: null },
+        istoast: false,
+        toastmsg: "na",
         Items: []
     },
     methods: {
@@ -44,6 +46,13 @@ window.app = new Vue({
             });
         },
 
+        showtoast: function(msg) {
+            console.log(msg);
+            this.istoast = true;
+            this.toastmsg = msg;
+            setTimeout(function(){ app.istoast=false; }, 3000);
+        },
+
         pollProgress: async function(urn) {
             const url = `${ServerURL}/api/status?urn=${urn}&token=${_adsk.token.access_token}`;
             const res = await fetch( url );
@@ -51,12 +60,15 @@ window.app = new Vue({
         },
 
         createScene: function(item) {
+            return; //disable this for now.
             fetch(`${ServerURL}/api/createscene?urn=${item.urn}&scene=${this.form.scene}&token=${_adsk.token.access_token}`).then((res) => res.json()).then((json) => {
-                console.log('createdScene');
+                app.showtoast('processing toolkit scene...');
                 const timer = setInterval( async () =>  {
                     const res = await this.pollProgress(item.urn);
+                    if (res.derivatives[1].children[1])
+                        app.showtoast(`...processing: ${res.derivatives[1].children[1].complete}`);
                     if (res.derivatives[1].progress != "inprogress") {
-                        alert('finished');
+                        app.showtoast('...finished processing file');
                         clearInterval(timer);
                         console.log(res);
                     }
