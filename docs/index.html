@@ -41,17 +41,17 @@
       <div id="urn" class="row">
         <div class="three columns">URN:</div>
         <div class="six columns"><input placeholder="URN" class="u-full-width" v-model="form.urn"></div>
-        <div class="three columns"><button>Copy</button></div>
+        <div class="three columns"><button v-if="'clipboard' in navigator && location.protocol === 'https:'" v-on:click="copyToClipboard">Copy</button></div>
       </div>
       <div id="token" class="row">
         <div class="three columns">Token:</div>
         <div class="six columns"><input placeholder="TOKEN" class="u-full-width" v-model="form.token"></div>
-        <div class="three columns"><button>Copy</button></div>
+        <div class="three columns"><button v-if="'clipboard' in navigator && location.protocol === 'https:'" v-on:click="copyToClipboard">Copy</button></div>
       </div>
       <div id="scene" class="row">
         <div class="three columns">Scene:</div>
         <div class="six columns"><input placeholder="SCENE" class="u-full-width" v-model="form.scene"></div>
-        <div class="three columns"><button>Copy</button></div>
+        <div class="three columns"><button v-if="'clipboard' in navigator && location.protocol === 'https:'" v-on:click="copyToClipboard">Copy</button></div>
       </div>
   </div>
   <div id="toast" v-bind:class="{ show: istoast }">{{toastmsg}}</div>
