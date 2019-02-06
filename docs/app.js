@@ -4,29 +4,6 @@ var markup;
 var ServerURL = 'https://xf79h9aa3l.execute-api.us-west-2.amazonaws.com/toolkit2';
 var ThumbURL = 'https://developer.api.autodesk.com/modelderivative/v2/designdata';
 
-// Setup copy-to-clipboard buttons
-if ('clipboard' in navigator && location.protocol === 'https:') {
-    function setup(button, input) {
-        button.addEventListener('click', async function() {
-            button.innerHTML = '...';
-            try {
-                await navigator.clipboard.writeText(input.value);
-            } catch(err) {
-                alert('Could not copy to clipboard (' + err + ')');
-            } finally {
-                button.innerHTML = 'Copy';
-            }
-        });
-    }
-    setup(document.querySelector('#urn button'), document.querySelector('#urn input'))
-    setup(document.querySelector('#token button'), document.querySelector('#token input'))
-    setup(document.querySelector('#scene button'), document.querySelector('#scene input'))
-} else {
-    document.querySelector('#urn button').style.setProperty('display', 'none');
-    document.querySelector('#token button').style.setProperty('display', 'none');
-    document.querySelector('#scene button').style.setProperty('display', 'none');
-}
-
 // Vue.js components
 window.app = new Vue({
     el: "#app",
@@ -110,6 +87,19 @@ window.app = new Vue({
             const res = await fetch( url, header );
             const blb = await res.blob();
             el.src = URL.createObjectURL(blb);
+        },
+
+        copyToClipboard: async function(event) {
+            const button = event.target;
+            const input = button.parentNode.parentNode.querySelector('input');
+            button.innerHTML = '...';
+            try {
+                await navigator.clipboard.writeText(input.value);
+            } catch(err) {
+                alert('Could not copy to clipboard (' + err + ')');
+            } finally {
+                button.innerHTML = 'Copy';
+            }
         }
     },
     directives: {
