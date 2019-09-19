@@ -31,11 +31,13 @@ window.app = new Vue({
                 accessToken: _adsk.token.access_token,
                 isAEC: true
             };
-            viewer = new Autodesk.Viewing.Private.GuiViewer3D(document.getElementById('forgeViewer'));
-            Autodesk.Viewing.Initializer(options);
-            Autodesk.Viewing.Document.load(`urn:${urn}`, (doc) =>{
-                var viewables = doc.getRoot().getDefaultGeometry();
-                viewer.loadDocumentNode(doc, viewables);
+            Autodesk.Viewing.Initializer(options, () = {
+                viewer = new Autodesk.Viewing.Private.GuiViewer3D(document.getElementById('forgeViewer'));
+                viewer.start();
+                Autodesk.Viewing.Document.load(`urn:${urn}`, (doc) => {
+                    var viewables = doc.getRoot().getDefaultGeometry();
+                    viewer.loadDocumentNode(doc, viewables);
+                });
             });
         },
 
