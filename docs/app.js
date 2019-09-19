@@ -31,7 +31,7 @@ window.app = new Vue({
                 accessToken: _adsk.token.access_token,
                 isAEC: true
             };
-            Autodesk.Viewing.Initializer(options, () = {
+            Autodesk.Viewing.Initializer(options, () => {
                 viewer = new Autodesk.Viewing.Private.GuiViewer3D(document.getElementById('forgeViewer'));
                 viewer.start();
                 Autodesk.Viewing.Document.load(`urn:${urn}`, (doc) => {
