@@ -34,9 +34,8 @@ window.app = new Vue({
             viewer = new Autodesk.Viewing.Private.GuiViewer3D(document.getElementById('forgeViewer'));
             Autodesk.Viewing.Initializer(options);
             Autodesk.Viewing.Document.load(`urn:${urn}`, (doc) =>{
-                var geometries = doc.getRoot().search({ 'type': 'geometry', 'role': '3d' });
-                svf = doc.getViewablePath(geometries[0]);
-                viewer.start(svf, { sharedPropertyDbPath: doc.getPropertyDbPath() });
+                var viewables = doc.getRoot().getDefaultGeometry();
+                viewer.loadDocumentNode(doc, viewables);
             });
         },
 
